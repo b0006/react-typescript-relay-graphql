@@ -29,7 +29,6 @@ class UsersModel extends React.Component<Props> {
           }
         `}
         render={(data) => {
-          console.log(data)
           if (data.error) return <div>Failure!</div>;
           if (!data.props) return <div>Loading...</div>;
           return <Users

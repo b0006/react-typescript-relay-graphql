@@ -24,10 +24,17 @@ class Users extends React.Component<Props> {
   }
 
   render(): ?React$Element<any> {
-    console.log(this.props)
     return (
       <section>
-        <p>users</p>
+        {this.props.users.map(user => 
+          <p>
+            <span>ID: {user.id}</span>
+            <br />
+            <span>Login: {user.login}</span>
+            <br />
+            <span>Email: {user.email}</span>
+          </p>
+        )}
       </section>
     );
   }
