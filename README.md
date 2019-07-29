@@ -6,12 +6,12 @@ More about [React](https://reactjs.org).
 More about [Flow](https://flow.org).  
 More about [Relay](https://facebook.github.io/relay).  
 
-Install: `yarn install && yarn setup`
-Relay: `yarn relay`
-Run: `yarn start`
-Build: `yarn build`
-Eject: `yarn eject`
-Flow: `yarn flow`
+* Install: `yarn install && yarn setup`
+* Relay: `yarn relay`
+* Run: `yarn start`
+* Build: `yarn build`
+* Eject: `yarn eject`
+* Flow: `yarn flow`
  
  
 
