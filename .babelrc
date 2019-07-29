@@ -1,7 +1,4 @@
 {
-  "presets": [
-    "env"
-  ],
   "plugins": [
     "relay",
     "transform-export-extensions"

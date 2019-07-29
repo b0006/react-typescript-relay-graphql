@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react';
-import { graphql, createRefetchContainer } from 'react-relay';
+import { createRefetchContainer } from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
 
 import type { Users_users } from './__generated__/Users_users.graphql';
 
