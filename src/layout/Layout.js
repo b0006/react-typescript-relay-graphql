@@ -4,7 +4,7 @@ import React from 'react';
 
 import UsersModel from '../users/UsersModel';
 
-import './layout.css';
+import './Layout.scss';
 
 class Layout extends React.Component<any> {
   title: string;

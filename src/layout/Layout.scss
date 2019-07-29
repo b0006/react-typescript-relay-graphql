@@ -1,0 +1,25 @@
+.layout {
+  display: flex;
+  flex: 1 100%;
+  flex-flow: row wrap;
+
+  &__header {
+    text-align: center;
+  }
+
+  &__footer {
+    text-align: right;
+  }
+
+  &__header, &__footer {
+    flex: 1 100%;
+    padding: 1rem;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(0, 0, 0, 1);
+  }
+
+  &__content {
+    flex: 1 100%;
+    padding: 2rem;
+  }
+}
