@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import UsersModel from '../users/UsersModel';
+import OrderModel from '../models/order/OrderModel';
 
 import './Layout.scss';
 
@@ -30,7 +30,7 @@ class Layout extends React.Component<any> {
           </h1>
         </header>
         <main className="layout__content">
-          <UsersModel id="3" className="layout__list" />
+          <OrderModel id="3" className="layout__list" />
         </main>
         <footer className="layout__footer">
           { this.currentYear() }
