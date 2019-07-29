@@ -6,7 +6,7 @@ More about [React](https://reactjs.org).
 More about [Flow](https://flow.org).  
 More about [Relay](https://facebook.github.io/relay).  
 
-* Install: `yarn install && yarn setup`
+* Install: `yarn install`
 * Relay: `yarn relay`
 * Run: `yarn start`
 * Build: `yarn build`
