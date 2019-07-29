@@ -1,10 +1,1763 @@
-type Query {
-  user(id: ID!): User
-  users: [User!]!
+type Accreditation {
+  status: ProfileAccreditationStatus
+  declineReason: String
 }
 
-type User {
+input AddEntrepreneurProfileInput {
+  name: String!
+  phone: String!
+}
+
+type AddEntrepreneurProfilePayload {
+  profile: EntrepreneurProfile!
+}
+
+input AddForeignProfileBankAccountInput {
+  profileId: ID!
+  attributes: ForeignBankAccountInput!
+}
+
+type AddForeignProfileBankAccountPayload {
+  profile: ForeignIndividualProfile!
+}
+
+input AddIndividualProfileInput {
+  name: String!
+  phone: String!
+}
+
+type AddIndividualProfilePayload {
+  profile: IndividualProfile!
+}
+
+input AddProfileBankAccountInput {
+  profileId: ID!
+  account: BankAccountInput!
+}
+
+type AddProfileBankAccountPayload {
+  profile: UserProfileUnion!
+}
+
+type Address {
+  country: String
+  region: String
+  area: String
+  locality: String
+  street: String
+  house: String
+  housing: String
+  structure: String
+  flat: String
+  raw: String
+}
+
+input AddressInput {
+  country: String
+  region: String
+  area: String
+  locality: String
+  street: String
+  house: String
+  housing: String
+  structure: String
+  flat: String
+  raw: String
+}
+
+type AmountWithCurrency {
+  currency: CurrencyEnum!
+  amount: Float!
+}
+
+input AnalyticsInput {
+  cid: String
+  userAgent: String
+  ipAddress: String
+  utms: String
+}
+
+type Asset {
+  code: ID!
+  amount: Float!
+}
+
+input AssetInput {
+  amount: Float!
+  assetId: ID!
+}
+
+type Attachment {
   id: ID!
-  login: String!
+  url: String!
+  size: Int!
+  width: Int
+  height: Int
+  format: String
+  filename: String!
+  access: String!
+}
+
+enum AttachmentsAccess {
+  PUBLIC
+  PRIVATE
+}
+
+type Avatar {
+  url: String!
+}
+
+type Bank {
+  bic: String!
+  name: String!
+}
+
+type BankAccount {
+  id: ID!
+  bank: Bank
+  checkingAccount: String
+  correspondentAccount: String
+  status: BankAccountStatusEnum!
+  paymentApprovalDocument: Document
+}
+
+input BankAccountInput {
+  bank: BankInput
+  checkingAccount: String
+  correspondentAccount: String
+}
+
+enum BankAccountStatusEnum {
+  INITIAL
+  APPROVED
+  DECLINED
+}
+
+union BankAccountUnion = BankAccount | ForeignBankAccount
+
+input BankInput {
+  bic: String
+  name: String
+}
+
+type Business {
+  main: String
+  aux: String
+  legalForm: String
+  startedAt: String
+}
+
+input BusinessInput {
+  main: String
+  aux: String
+  legalForm: String
+  startedAt: String
+}
+
+input ConfirmBankAccountWithPhoneInput {
+  accountId: ID!
+  token: String!
+}
+
+type ConfirmBankAccountWithPhonePayload {
+  account: BankAccount!
+  foreignAccount: ForeignBankAccount
+}
+
+input ConfirmPhoneInput {
+  phone: String!
+  token: String!
+}
+
+type ConfirmPhonePayload {
+  signedPhone: String!
+}
+
+type CountryEntry {
+  code: String!
+  name: String!
+}
+
+input CreateExpressQuestionaryInput {
+  inn: String!
+  name: String!
+  phone: String!
+  site: String
+  presentation: ID
+  isBelongToGroup: Boolean!
+  groupInns: [String!]!
+  orderData: OrderData!
+}
+
+type CreateExpressQuestionaryPayload {
+  user: User!
+  questionary: ExpressQuestionary!
+}
+
+input CreateForeignIndividualProfileInput {
+  attributes: ForeignIndividualProfileAttributesInput!
+  shouldSkipValidation: Boolean = false
+}
+
+type CreateForeignIndividualProfilePayload {
+  profile: ForeignIndividualProfile!
+}
+
+input CreateIndividualProfileInput {
+  name: String!
+  signedPhone: String
+  signedAvatar: String
+}
+
+type CreateIndividualProfilePayload {
+  user: User!
+  profile: IndividualProfile!
+}
+
+input CreateInvestmentIntentInput {
+  orderId: ID!
+  profileId: ID!
+}
+
+type CreateInvestmentIntentPayload {
+  status: Boolean!
+}
+
+input CreateLegalEntityProfileInput {
+  inn: String!
+  name: String!
+  signedPhone: String
+  signedAvatar: String
+}
+
+type CreateLegalEntityProfilePayload {
+  user: User!
+  profile: LegalEntityProfile!
+}
+
+input CreateOrderInput {
+  profileId: ID!
+}
+
+type CreateOrderPayload {
+  order: Order!
+}
+
+type CreditRating {
+  rating: String!
+  ratedAt: String!
+}
+
+enum CurrencyEnum {
+  RUB
+  EUR
+}
+
+scalar Cursor
+
+type Document {
+  url: String!
+  type: OrderDocumentTypeEnum!
+}
+
+type EntrepreneurGuarantorProvision {
+  fullName: String!
+  psrnie: String!
+}
+
+type EntrepreneurInvestorAccreditation implements ProfileAccreditation {
+  id: ID!
+  inn: String!
+  psrnie: String!
+  approved_at: String
+}
+
+type EntrepreneurProfile implements Node & UserProfile {
+  id: ID!
+  name: String!
+  phone: String
+  avatar: String
+  _avatar: Avatar
+  wallet: Wallet
+  inn: String
+  psrnie: String
+  birthDate: String
+  birthPlace: String
+  isPublicOfficial: Boolean
+  bankAccounts: [BankAccount!]!
+  isApproved: Boolean!
+  investorData: EntrepreneurProfileInvestorData
+  accreditation(role: ProfileRoleEnum!): Accreditation!
+  application: OrderApplication
+  canBeBorrower: Boolean!
+  approvedAsBorrower: Boolean!
+  canBeInvestor: Boolean!
+  approvedAsInvestor: Boolean!
+  approvedOnce: Boolean!
+  creditRating: CreditRating
+  accountBalance: Float! @deprecated(reason: "Use accountBalanceDetailed")
+  accountBalanceDetailed: [ProfileAccountBalance!]!
+  virtualDepositPurpose: GeneratedDocument
+  isRussiaTaxResident: Boolean!
+  investment(orderId: ID!): Investment
+  orders(first: Int, after: Cursor): OrderConnection!
+  transactions(first: Int, after: Cursor): TransactionConnection!
+}
+
+type EntrepreneurProfileInvestorData {
+  name: String
+  inn: String
+  psrnie: String
+  iian: String
+  ifns: String
+  birthDate: String
+  birthPlace: String
+  employment: String
+  isPublicOfficial: Boolean
+  registrationAddress: Address
+  actualAddress: Address
+  passport: Passport
+  bankAccount: BankAccount
+}
+
+input ExchangeCurrencyInput {
+  profileId: ID!
+  amount: Float!
+  fromCurrency: CurrencyEnum!
+  toCurrency: CurrencyEnum!
+  token: String!
+}
+
+type ExchangeCurrencyPayload {
+  status: Boolean!
+}
+
+type ExchangeRate {
+  buy: CurrencyEnum!
+  sell: CurrencyEnum!
+  price: Float!
+}
+
+type Executive {
+  name: String
+}
+
+input ExecutiveInput {
+  name: String
+}
+
+type ExpressQuestionary implements Node {
+  id: ID!
+  inn: String!
+  name: String!
+  phone: String!
+  state: ExpressQuestionaryState!
+  lastUpdatedAt: String!
+  site: String
+  presentation: Attachment
+  isBelongToGroup: Boolean!
+  groupInns: [String!]!
+  orderData: ExpressQuestionaryOrderData!
+}
+
+type ExpressQuestionaryCollateral {
+  kind: ProvisionKindEnum!
+  value: String!
+}
+
+input ExpressQuestionaryCollateralInput {
+  kind: ProvisionKindEnum!
+  value: String!
+}
+
+type ExpressQuestionaryOrderData {
+  amount: String!
+  term: String!
+  interest: String!
+  hasCollateral: Boolean!
+  collaterals: [ExpressQuestionaryCollateral!]!
+}
+
+type ExpressQuestionaryState {
+  status: ProfileAccreditationStatus!
+  reason: String
+}
+
+type ExternalExpert {
+  id: ID!
+  avatar: Attachment!
+  name: String!
+  about: String!
+  experience: String!
+}
+
+type ExternalMedia {
+  id: ID!
+  url: String!
+  type: String!
+  title: String
+  description: String
+  video: ExternalMediaVideo!
+}
+
+type ExternalMediaVideo {
+  url: String!
+  width: Int
+  height: Int
+}
+
+type FinancialStatement {
+  attachment: Attachment!
+  name: String!
+  year: Int!
+}
+
+interface FinancialTransactionAccount {
+  id: ID!
+  description: String
+}
+
+type FinancialTransactionProfileAccount implements FinancialTransactionAccount {
+  id: ID!
+  description: String
+  profile: UserProfile
+  foreignProfile: ForeignIndividualProfile
+}
+
+type FinancialTransactionSharedWalletAccount implements FinancialTransactionAccount {
+  id: ID!
+  order: Order!
+  description: String
+}
+
+enum FinancialTransactionStateEnum {
+  OK
+  ERROR
+  PENDING_BANK
+  WAIT_BC
+  WAIT_MODERATE
+  REJECTED_BANK
+  REJECTED_OPERATOR
+  DRAFT
+}
+
+type FinancialTransactionSystemAccount implements FinancialTransactionAccount {
+  id: ID!
+  description: String
+}
+
+enum FinancialTransactionTypeEnum {
+  BORROW
+  DEPOSIT
+  UNKNOWN
+  WITHDRAWAL
+  CURRENCY_EXCHANGE
+  FEE
+  FEE_REFUND
+  KYC
+  LOAN_REPAYMENT
+  INCOME_TAX
+  REFUND
+  PENALTY
+  PENALTY_FEE
+  INTEREST_FEE
+  INTEREST_REPAYMENT
+  INVESTMENT
+  INVESTMENT_REFUND
+  INVESTMENT_RETURN
+  META_FEE
+  META_FEE_RETURN
+  META_KYC
+  METAL_LOAN_REPAYMENT
+  META_BORROW
+  META_PENALTY
+  META_INVESTMENT
+  META_INVESTMENT_RETURN
+  META_INTEREST_REPAYMENT
+  META_WITHDRAWAL
+  WITHDRAWAL_FEE
+}
+
+type ForeignBank {
+  name: String!
+  address: String!
+  SWIFT: String!
+}
+
+type ForeignBankAccount {
+  id: ID!
+  ownerName: String!
+  IBAN: String!
+  bank: ForeignBank!
+  status: BankAccountStatusEnum!
+}
+
+input ForeignBankAccountInput {
+  ownerName: String!
+  IBAN: String!
+  bank: ForeignBankInput!
+}
+
+input ForeignBankInput {
+  name: String!
+  address: String!
+  SWIFT: String!
+}
+
+type ForeignIndividualProfile implements Node {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  phone: String!
+  tin: String
+  documents: [KYCDocument!]!
+  selfie: Attachment
+  bankAccounts: [BankAccountUnion!]!
+  accreditation: Accreditation!
+  accountBalance: [ProfileAccountBalance!]!
+  hasUSACitizenship: Boolean!
+  isRussiaTaxResident: Boolean!
+  residenceDocument: Attachment
+  virtualDepositPurpose: GeneratedDocument
+  investment(orderId: ID!): Investment
+  transactions(first: Int, after: Cursor): TransactionConnection!
+}
+
+input ForeignIndividualProfileAttributesInput {
+  firstName: String!
+  lastName: String!
+  documents: [KYCDocumentInput!]
+  selfie: ID
+  phone: String!
+  tin: String
+  hasUSACitizenship: Boolean
+  isRussiaTaxResident: Boolean
+  residenceDocument: ID
+}
+
+type FoundAddressType {
+  value: String!
+  postalCode: String
+  region: String
+  regionType: String
+  area: String
+  areaType: String
+  city: String
+  cityType: String
+  cityDistrict: String
+  cityDistrictType: String
+  settlement: String
+  settlementType: String
+  street: String
+  streetType: String
+  house: String
+  houseType: String
+  block: String
+  blockType: String
+  flat: String
+  flatType: String
+  postalBox: String
+}
+
+type GeneratedDocument {
+  url: String!
+  type: OrderDocumentTypeEnum! @deprecated(reason: "What for at all?")
+}
+
+input GetOrderDocumentInput {
+  orderId: ID!
+  document: String
+}
+
+type GetOrderDocumentPayload {
+  order: Order!
+}
+
+type GuarantorProvision implements ProvisionInterface {
+  id: ID!
+  kind: ProvisionKindEnum!
+  name: String!
+  value: Float!
+  legal: LegalGuarantorProvision
+  individual: IndividualGuarantorProvision
+  entrepreneur: EntrepreneurGuarantorProvision
+  images: [Attachment!]!
+  videos: [ExternalMedia!]!
+  documents: [Attachment!]!
+  description: String!
+}
+
+type IndividualGuarantorProvision {
+  fullName: String!
+  inn: String!
+}
+
+type IndividualInvestorAccreditation implements ProfileAccreditation {
+  id: ID!
+  inn: String!
+  approved_at: String
+}
+
+type IndividualProfile implements Node & UserProfile {
+  id: ID!
+  name: String!
+  phone: String
+  avatar: String
+  _avatar: Avatar
+  wallet: Wallet
+  inn: String
+  birthDate: String
+  birthPlace: String
+  isPublicOfficial: Boolean
+  bankAccounts: [BankAccount!]!
+  isApproved: Boolean!
+  investorData: IndividualProfileInvestorData
+  accreditation(role: ProfileRoleEnum!): Accreditation!
+  application: OrderApplication
+  canBeBorrower: Boolean!
+  approvedAsBorrower: Boolean!
+  canBeInvestor: Boolean!
+  approvedAsInvestor: Boolean!
+  approvedOnce: Boolean!
+  creditRating: CreditRating
+  accountBalance: Float! @deprecated(reason: "Use accountBalanceDetailed")
+  accountBalanceDetailed: [ProfileAccountBalance!]!
+  virtualDepositPurpose: GeneratedDocument
+  isRussiaTaxResident: Boolean!
+  investment(orderId: ID!): Investment
+  orders(first: Int, after: Cursor): OrderConnection!
+  transactions(first: Int, after: Cursor): TransactionConnection!
+}
+
+type IndividualProfileInvestorData {
+  name: String
+  inn: String
+  iian: String
+  ifns: String
+  birthDate: String
+  birthPlace: String
+  employment: String
+  isPublicOfficial: Boolean
+  registrationAddress: Address
+  actualAddress: Address
+  passport: Passport
+  bankAccount: BankAccount
+}
+
+type Investment {
+  id: ID!
+  order: Order!
+  number: String
+  profile: UserProfile!
+  amount: Float!
+  confirmation: GeneratedDocument
+}
+
+type InvestmentConnection {
+  count: Int!
+  edges: [InvestmentEdge!]!
+  pageInfo: PageInfo!
+}
+
+type InvestmentEdge {
+  node: Investment!
+  cursor: Cursor!
+}
+
+input InvestToOrderInput {
+  orderId: ID!
+  profileId: ID!
+  amount: Float!
+  token: String!
+  source: String
+}
+
+type InvestToOrderPayload {
+  order: Order!
+  profile: UserProfileUnion!
+}
+
+type KYCDocument {
+  type: KYCDocumentTypeEnum!
+  attachments: [Attachment!]!
+}
+
+input KYCDocumentInput {
+  attachments: [ID!]!
+  type: KYCDocumentTypeEnum
+}
+
+enum KYCDocumentTypeEnum {
+  ID_CARD
+  PASSPORT
+  DRIVERS
+  RESIDENCE_PERMIT
+  OTHER
+}
+
+type LegalBorrowerAccreditation implements ProfileAccreditation {
+  id: ID!
+  ogrn: String!
+  approved_at: String
+}
+
+type LegalEntityProfile implements Node & UserProfile {
+  id: ID!
+  inn: String!
+  logo: String
+  _avatar: Avatar
+  name: String!
+  phone: String
+  wallet: Wallet
+  isApproved: Boolean!
+  bankAccounts: [BankAccount!]!
+  accreditation(role: ProfileRoleEnum!): Accreditation!
+  borrowerData: LegalEntityProfileBorrowerData
+  application: OrderApplication
+  canBeBorrower: Boolean!
+  approvedAsBorrower: Boolean!
+  canBeInvestor: Boolean!
+  approvedAsInvestor: Boolean!
+  approvedOnce: Boolean!
+  creditRating: CreditRating
+  accountBalance: Float! @deprecated(reason: "Use accountBalanceDetailed")
+  accountBalanceDetailed: [ProfileAccountBalance!]!
+  virtualDepositPurpose: GeneratedDocument
+  orders(first: Int, after: Cursor): OrderConnection!
+  transactions(first: Int, after: Cursor): TransactionConnection!
+}
+
+type LegalEntityProfileBorrowerData {
+  inn: String
+  kpp: String
+  ogrn: String
+  name: String
+  iian: String
+  address: Address
+  business: Business
+  passport: Passport
+  executive: Executive
+  actualAddress: Address
+  bankAccounts: [BankAccount]
+    @deprecated(reason: "Use bankAccounts of LegalEntityProfile type")
+}
+
+type LegalGuarantorProvision {
+  fullName: String!
+  inn: String!
+  psrn: String!
+}
+
+type Loan implements Node {
+  id: ID!
+  code: String!
+  memo: String!
+  amount: Asset!
+  period: Int!
+  status: String!
+  wallet: Wallet!
+  percent: Int!
+  collateral: Asset
+  created_at: String!
+}
+
+type LoanConnection {
+  count: Int!
+  edges: [LoanEdge!]!
+  pageInfo: PageInfo!
+}
+
+type LoanEdge {
+  node: Loan!
+  cursor: Cursor!
+}
+
+type LoanInfo {
+  state: String
+  pastdue_days: Int
+  penalty: Float
+}
+
+enum LocaleEnum {
+  RU
+  EN
+  KO
+  ZH
+}
+
+type LocalizedString {
+  key: String!
+  name: String!
+  value: String!
+}
+
+type LocalizedStrings {
+  karmaPaymentRequisites: [LocalizedString!]!
+  investorPaymentPurpose(orderId: ID!, profileId: ID!): [LocalizedString!]!
+  virtualDepositPurpose(profileId: ID!): [LocalizedString!]!
+}
+
+input LoginWithAuthenticationTokenInput {
+  token: String!
+}
+
+type LoginWithAuthenticationTokenPayload {
+  kind: String!
+  token: String!
+}
+
+input LoginWithEmailAndPasswordInput {
   email: String!
+  password: String!
+}
+
+type LoginWithEmailAndPasswordPayload {
+  token: String!
+}
+
+input MailBorrowerOfferInput {
+  orderId: ID!
+}
+
+type MailBorrowerOfferPayload {
+  status: Boolean!
+}
+
+input MailInvestorPaymentInput {
+  orderId: ID!
+  profileId: ID
+}
+
+type MailInvestorPaymentPayload {
+  status: Boolean!
+}
+
+input MailVirtualDepositInput {
+  profileId: ID!
+}
+
+type MailVirtualDepositPayload {
+  status: Boolean!
+}
+
+type Mutation {
+  addEntrepreneurProfile(
+    input: AddEntrepreneurProfileInput!
+  ): AddEntrepreneurProfilePayload!
+  addForeignProfileBankAccount(
+    input: AddForeignProfileBankAccountInput!
+  ): AddForeignProfileBankAccountPayload!
+  addIndividualProfile(
+    input: AddIndividualProfileInput!
+  ): AddIndividualProfilePayload!
+  addProfileBankAccount(
+    input: AddProfileBankAccountInput!
+  ): AddProfileBankAccountPayload!
+  confirmBankAccountWithPhone(
+    input: ConfirmBankAccountWithPhoneInput!
+  ): ConfirmBankAccountWithPhonePayload!
+  confirmPhone(input: ConfirmPhoneInput!): ConfirmPhonePayload!
+  createExpressQuestionary(
+    input: CreateExpressQuestionaryInput!
+  ): CreateExpressQuestionaryPayload!
+  createForeignIndividualProfile(
+    input: CreateForeignIndividualProfileInput!
+  ): CreateForeignIndividualProfilePayload!
+  createIndividualProfile(
+    input: CreateIndividualProfileInput!
+  ): CreateIndividualProfilePayload!
+    @deprecated(reason: "Use addIndividualProfile")
+  createInvestmentIntent(
+    input: CreateInvestmentIntentInput!
+  ): CreateInvestmentIntentPayload!
+    @deprecated(reason: "delete in next version")
+  createLegalEntityProfile(
+    input: CreateLegalEntityProfileInput!
+  ): CreateLegalEntityProfilePayload!
+  createOrder(input: CreateOrderInput!): CreateOrderPayload!
+  exchangeCurrency(input: ExchangeCurrencyInput!): ExchangeCurrencyPayload!
+  getOrderDocument(input: GetOrderDocumentInput!): GetOrderDocumentPayload!
+  investToOrder(input: InvestToOrderInput!): InvestToOrderPayload!
+  loginWithAuthenticationToken(
+    input: LoginWithAuthenticationTokenInput!
+  ): LoginWithAuthenticationTokenPayload!
+  loginWithEmailAndPassword(
+    input: LoginWithEmailAndPasswordInput
+  ): LoginWithEmailAndPasswordPayload!
+  mailBorrowerOffer(input: MailBorrowerOfferInput!): MailBorrowerOfferPayload!
+  mailInvestorPayment(
+    input: MailInvestorPaymentInput!
+  ): MailInvestorPaymentPayload!
+  mailVirtualDeposit(
+    input: MailVirtualDepositInput!
+  ): MailVirtualDepositPayload!
+  registerUser(input: RegisterUserInput!): RegisterUserPayload!
+  removeProfile(input: RemoveProfileInput!): RemoveProfilePayload!
+  requestOrderApproval(
+    input: RequestOrderApprovalInput!
+  ): RequestOrderApprovalPayload!
+  requestPhoneConfirmation(
+    input: RequestPhoneConfirmationInput!
+  ): RequestPhoneConfirmationPayload!
+  requestProfileAccreditation(
+    input: RequestProfileAccreditationInput!
+  ): RequestProfileAccreditationPayload!
+  requestProfilePhoneConfirmation(
+    input: RequestProfilePhoneConfirmationInput!
+  ): RequestProfilePhoneConfirmationPayload!
+  requestWithdrawal(input: RequestWithdrawalInput!): RequestWithdrawalPayload!
+  resetPassword(input: ResetPasswordInput!): ResetPasswordPayload!
+  scrapExternalMedia(
+    input: ScrapExternalMediaInput!
+  ): ScrapExternalMediaPayload!
+  setEntrepreneurProfile(
+    input: SetEntrepreneurProfileInput!
+  ): SetEntrepreneurProfilePayload!
+  setIndividualProfile(
+    input: SetIndividualProfileInput!
+  ): SetIndividualProfilePayload!
+  setOrderKarmaTrustedStatus(
+    input: SetOrderKarmaTrustedStatusInput!
+  ): SetOrderKarmaTrustedStatusPayload!
+  setViewerCurrency(input: SetViewerCurrencyInput!): SetViewerCurrencyPayload!
+  setViewerLocale(input: SetViewerLocaleInput!): SetViewerLocalePayload!
+  setViewerMailingListSubscriptionStatus(
+    input: SetViewerMailingListSubscriptionStatusInput!
+  ): SetViewerMailingListSubscriptionStatusPayload
+  setViewerPassword(input: SetViewerPasswordInput!): SetViewerPasswordPayload!
+  setViewerVisibility(
+    input: SetViewerVisibilityInput!
+  ): SetViewerVisibilityPayload!
+  updateBankAccount(input: UpdateBankAccountInput!): UpdateBankAccountPayload!
+  updateEntrepreneurProfileAsInvestor(
+    input: UpdateEntrepreneurProfileAsInvestorInput!
+  ): UpdateEntrepreneurProfileAsInvestorPayload!
+  updateForeignBankAccount(
+    input: UpdateForeignBankAccountInput!
+  ): UpdateForeignBankAccountPayload!
+  updateForeignIndividualProfile(
+    input: UpdateForeignIndividualProfileInput!
+  ): UpdateForeignIndividualProfilePayload!
+  updateIndividualProfile(
+    input: UpdateIndividualProfileInput!
+  ): UpdateIndividualProfilePayload!
+    @deprecated(reason: "Use setIndividualProfile")
+  updateIndividualProfileAsInvestor(
+    input: UpdateIndividualProfileAsInvestorInput!
+  ): UpdateIndividualProfileAsInvestorPayload!
+  updateIndividualProfileInvestorAccreditation(
+    input: UpdateIndividualProfileInvestorAccreditationInput!
+  ): UpdateIndividualProfileInvestorAccreditationPayload!
+    @deprecated(reason: "Use updateIndividualProfileAsInvestor")
+  updateLegalEntityProfile(
+    input: UpdateLegalEntityProfileInput!
+  ): UpdateLegalEntityProfilePayload!
+  updateLegalEntityProfileBorrowerData(
+    input: UpdateLegalEntityProfileBorrowerDataInput!
+  ): UpdateLegalEntityProfileBorrowerDataPayload!
+  updateOrderApplication(
+    input: UpdateOrderApplicationInput!
+  ): UpdateOrderApplicationPayload!
+  updateOrderOffer(input: UpdateOrderOfferInput!): UpdateOrderOfferPayload!
+  updateProfile(input: UpdateProfileInput!): UpdateProfilePayload!
+  uploadAvatar(
+    input: UploadAvatarInput = { field: "avatar" }
+  ): UploadAvatarPayload!
+  uploadFile(input: UploadFileInput!): Attachment!
+  uploadPassportScan(
+    input: UploadPassportScanInput = { field: "scan" }
+  ): UploadPassportScanPayload!
+}
+
+interface Node {
+  id: ID!
+}
+
+type Order implements Node {
+  id: ID!
+  profile: UserProfile!
+  offer: OrderOffer
+  application: OrderApplication
+  guarantors: [OrderGuarantor!]!
+  createdAt: String!
+  confirmedAt: String
+  approvalRequestedAt: String
+  fee: Float
+  chain: OrderChainInfo
+  status: OrderStatusEnum
+  statusFrom: String
+  creditRating: CreditRating
+  viewer: OrderViewer!
+  document(type: OrderDocumentTypeEnum!): GeneratedDocument
+  otherDocuments: [OrderDocument!]!
+  cession: OrderCession
+  conclusions: [OrderConclusion!]!
+  expertOpinions: [OrderExpertOpinion!]!
+  karma: OrderKarma!
+  externalUrl: String
+  skipOffer: Boolean!
+  collateral: OrderCollateral!
+  financialStatements: [FinancialStatement!]!
+  paymentScheduleList: [PaymentSchedule!]!
+  provision: OrderProvision
+}
+
+type OrderApplication {
+  id: ID!
+  data: String!
+  receivedAt: String
+  approvedAt: String
+  declinedAt: String
+  declineReason: String
+  attachments: [Attachment!]!
+  externalMedium: [ExternalMedia!]!
+  shortTitle: String!
+  longTitle: String!
+  description: String!
+}
+
+type OrderCession {
+  due: String!
+  avatar: Attachment!
+  isActive: Boolean!
+  borrowerName: String!
+  borrowerRating: CreditRating!
+  interestRate: Float!
+  originalChainId: String!
+  amount: Float!
+}
+
+type OrderChainInfo {
+  id: ID!
+  gatheredAmount: Float!
+  investorsCount: Int!
+}
+
+type OrderCollateral {
+  requirements: String!
+}
+
+type OrderConclusion {
+  id: ID!
+  expertName: String!
+  expertAvatar: Attachment
+  expertExperience: String
+  conclusion: String!
+  isKarma: Boolean!
+  fbURL: String
+  liURL: String
+  isActive: Boolean!
+}
+
+type OrderConnection {
+  count: Int!
+  moneyFlow: Int!
+  edges: [OrderEdge!]!
+  pageInfo: PageInfo!
+}
+
+input OrderData {
+  amount: String!
+  term: String!
+  interest: String!
+  hasCollateral: Boolean!
+  collaterals: [ExpressQuestionaryCollateralInput!]!
+}
+
+type OrderDocument {
+  attachment: Attachment!
+  description: String!
+  access: OrderDocumentAccess
+}
+
+enum OrderDocumentAccess {
+  PUBLIC
+  EXCLUDED_PUBLIC
+  PRIVATE
+}
+
+enum OrderDocumentTypeEnum {
+  GENERATED
+  BORROWER_FEE
+  BORROWER_OFFER
+  BORROWER_PAYMENT
+  INVESTOR_PAYMENT
+    @deprecated(reason: "Use OrderViewer.investorPaymentRequisites instead")
+}
+
+type OrderEdge {
+  node: Order!
+  cursor: Cursor!
+}
+
+type OrderExpertOpinion {
+  id: ID!
+  opinion: String!
+  expert: ExternalExpert!
+}
+
+type OrderGuarantor {
+  attachment: Attachment!
+  name: String
+  description: String
+  access: OrderDocumentAccess
+}
+
+type OrderKarma {
+  isTrusted: Boolean!
+  isInvestor: Boolean!
+  conclusion: String
+}
+
+type OrderOffer {
+  id: ID!
+  data: String!
+  receivedAt: String
+  approvedAt: String
+  declinedAt: String
+  declineReason: String
+  attachments: [Attachment!]!
+}
+
+type OrderProvision {
+  items: [ProvisionInterface!]!
+  value: Float!
+  coverage: Float!
+}
+
+input OrdersFilter {
+  status: [OrdersFilterStatusEnum!] = [CONFIRMED]
+  cession: Boolean
+}
+
+enum OrdersFilterStatusEnum {
+  CONFIRMED
+  TRANSFER
+  DEAD
+  COMPLETE
+  SUCCEEDED
+  DEFAULT
+}
+
+enum OrderStatusEnum {
+  INITIAL
+  PENDING
+  APPROVED
+  DECLINED
+  CONFIRMED
+  TRANSFER
+  DEAD
+  COMPLETE
+  SUCCEEDED
+  DEFAULT
+}
+
+type OrderViewer {
+  hasIntent: Boolean!
+  investedAmount: Float!
+  investorPaymentRequisites: GeneratedDocument
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: Cursor
+  endCursor: Cursor
+}
+
+type Passport {
+  id: ID
+  series: String
+  number: String
+  issuedAt: String
+  issuedBy: PassportIssuer
+  scans: [Attachment!]!
+  postponeScans: Boolean
+}
+
+type PassportConnection {
+  count: Int!
+  edges: [PassportEdge!]!
+  pageInfo: PageInfo!
+}
+
+type PassportEdge {
+  node: Passport!
+  cursor: Cursor!
+}
+
+input PassportInput {
+  series: String
+  number: String
+  issuedAt: String
+  issuedBy: PassportIssuerInput
+  scans: [ID!]!
+  postponeScans: Boolean
+}
+
+type PassportIssuer {
+  code: String
+  name: String
+}
+
+input PassportIssuerInput {
+  code: String
+  name: String
+}
+
+type PassportScan {
+  id: ID!
+  url: String!
+  name: String!
+}
+
+type PaymentSchedule {
+  items: [PaymentScheduleItem!]!
+  info: LoanInfo
+  profile: UserProfile
+  foreignProfile: ForeignIndividualProfile
+}
+
+type PaymentScheduleItem {
+  date: String!
+  loan: Float!
+  loan_details: [AmountWithCurrency!]!
+  state: String
+  total: Float!
+  total_details: [AmountWithCurrency!]!
+  total_gross: Float!
+  total_gross_details: [AmountWithCurrency!]!
+  interest: Float!
+  interest_details: [AmountWithCurrency!]!
+  interest_fee: Float!
+  interest_fee_details: [AmountWithCurrency!]!
+  personal_tax: Float!
+  personal_tax_details: [AmountWithCurrency!]!
+  exchangeRates: [AmountWithCurrency!]!
+}
+
+type ProfileAccountBalance {
+  currency: CurrencyEnum!
+  available: Float!
+  blocked: Float!
+  invested: Float!
+}
+
+interface ProfileAccreditation {
+  id: ID!
+  approved_at: String
+}
+
+enum ProfileAccreditationStatus {
+  INITIAL
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+enum ProfileRoleEnum {
+  INVESTOR
+  BORROWER
+}
+
+type Provision implements ProvisionInterface {
+  id: ID!
+  kind: ProvisionKindEnum!
+  name: String!
+  value: Float!
+  images: [Attachment!]!
+  videos: [ExternalMedia!]!
+  documents: [Attachment!]!
+  description: String!
+}
+
+interface ProvisionInterface {
+  id: ID!
+  kind: ProvisionKindEnum!
+  name: String!
+  value: Float!
+  images: [Attachment!]!
+  videos: [ExternalMedia!]!
+  documents: [Attachment!]!
+  description: String!
+}
+
+enum ProvisionKindEnum {
+  OTHER
+  ESTATE
+  VEHICLE
+  GUARANTOR
+}
+
+type Query {
+  address(query: String!): [FoundAddressType!]!
+  countries(locale: LocaleEnum = RU): [CountryEntry!]!
+  exchangeRates: [ExchangeRate!]!
+  loans(first: Int, after: Cursor, walletIds: [ID!] = []): LoanConnection!
+  localizedStrings: LocalizedStrings!
+  node(id: ID!): Node!
+  orders(
+    first: Int
+    after: Cursor
+    filter: OrdersFilter = { status: [CONFIRMED] }
+  ): OrderConnection!
+  preSchedule(orderId: ID!, amount: Float!): [PaymentScheduleItem]!
+  users: UserConnection!
+  version: Version!
+  viewer: User
+}
+
+input RegisterUserInput {
+  email: String!
+  password: String
+  locale: LocaleEnum
+  country: String
+  shouldSubscribeToMailingList: Boolean
+  source: String
+  analytics: AnalyticsInput
+}
+
+type RegisterUserPayload {
+  status: Boolean!
+}
+
+input RemoveProfileInput {
+  id: ID!
+}
+
+type RemoveProfilePayload {
+  user: User!
+}
+
+input RequestOrderApprovalInput {
+  token: ID!
+  orderId: ID!
+}
+
+type RequestOrderApprovalPayload {
+  order: Order!
+}
+
+input RequestPhoneConfirmationInput {
+  phone: String!
+}
+
+type RequestPhoneConfirmationPayload {
+  status: Boolean!
+}
+
+input RequestProfileAccreditationInput {
+  role: ProfileRoleEnum!
+  token: ID!
+  profileId: ID!
+  analytics: AnalyticsInput
+}
+
+type RequestProfileAccreditationPayload {
+  profile: UserProfile!
+  foreignProfile: ForeignIndividualProfile
+}
+
+input RequestProfilePhoneConfirmationInput {
+  profileId: ID!
+}
+
+type RequestProfilePhoneConfirmationPayload {
+  status: Boolean!
+}
+
+input RequestWithdrawalInput {
+  profileId: ID!
+  amount: Float!
+  currency: CurrencyEnum
+  token: String!
+}
+
+type RequestWithdrawalPayload {
+  profile: UserProfileUnion!
+}
+
+input ResetPasswordInput {
+  email: String!
+}
+
+type ResetPasswordPayload {
+  status: Boolean!
+}
+
+input ScrapExternalMediaInput {
+  url: String!
+}
+
+type ScrapExternalMediaPayload {
+  media: ExternalMedia!
+}
+
+input SetEntrepreneurProfileInput {
+  profileId: ID!
+  name: String!
+  phone: String!
+}
+
+type SetEntrepreneurProfilePayload {
+  profile: EntrepreneurProfile!
+}
+
+input SetIndividualProfileInput {
+  profileId: ID!
+  name: String!
+  phone: String!
+}
+
+type SetIndividualProfilePayload {
+  profile: IndividualProfile!
+}
+
+input SetOrderKarmaTrustedStatusInput {
+  orderId: ID!
+  isTrusted: Boolean!
+}
+
+type SetOrderKarmaTrustedStatusPayload {
+  order: Order!
+}
+
+input SetViewerCurrencyInput {
+  currency: CurrencyEnum!
+}
+
+type SetViewerCurrencyPayload {
+  viewer: User!
+}
+
+input SetViewerLocaleInput {
+  locale: LocaleEnum!
+}
+
+type SetViewerLocalePayload {
+  viewer: User!
+}
+
+input SetViewerMailingListSubscriptionStatusInput {
+  isSubscribed: Boolean!
+}
+
+type SetViewerMailingListSubscriptionStatusPayload {
+  user: User!
+}
+
+input SetViewerPasswordInput {
+  password: String!
+  current_password: String
+}
+
+type SetViewerPasswordPayload {
+  viewer: User!
+}
+
+input SetViewerVisibilityInput {
+  personal: Boolean!
+  profiles: Boolean!
+}
+
+type SetViewerVisibilityPayload {
+  user: User!
+}
+
+type StringWithLocale {
+  locale: LocaleEnum
+  value: String!
+}
+
+input StringWithLocaleInput {
+  locale: LocaleEnum!
+  value: String!
+}
+
+type Transaction {
+  id: ID!
+  date: String
+  type: FinancialTransactionTypeEnum
+  error: String
+  state: FinancialTransactionStateEnum
+  amount: Float!
+  description: String
+  toAccount: FinancialTransactionAccount
+  fromAccount: FinancialTransactionAccount
+}
+
+type TransactionConnection {
+  count: Int!
+  edges: [TransactionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type TransactionEdge {
+  node: Transaction!
+  cursor: Cursor!
+}
+
+input UpdateBankAccountInput {
+  accountId: ID!
+  account: BankAccountInput!
+}
+
+type UpdateBankAccountPayload {
+  account: BankAccount!
+}
+
+input UpdateEntrepreneurProfileAsInvestorInput {
+  profileId: ID!
+  inn: String!
+  psrnie: String!
+  iian: String
+  address: AddressInput!
+  passport: PassportInput!
+  birthDate: String!
+  birthPlace: String!
+  isPublicOfficial: Boolean!
+  isRussiaTaxResident: Boolean!
+  shouldSkipValidation: Boolean = false
+}
+
+type UpdateEntrepreneurProfileAsInvestorPayload {
+  profile: EntrepreneurProfile!
+}
+
+input UpdateForeignBankAccountInput {
+  accountId: ID!
+  attributes: ForeignBankAccountInput!
+}
+
+type UpdateForeignBankAccountPayload {
+  account: ForeignBankAccount!
+}
+
+input UpdateForeignIndividualProfileInput {
+  profileId: ID!
+  attributes: ForeignIndividualProfileAttributesInput!
+  shouldSkipValidation: Boolean = false
+}
+
+type UpdateForeignIndividualProfilePayload {
+  profile: ForeignIndividualProfile!
+}
+
+input UpdateIndividualProfileAsInvestorInput {
+  profileId: ID!
+  inn: String!
+  iian: String!
+  address: AddressInput!
+  passport: PassportInput!
+  birthDate: String!
+  birthPlace: String!
+  isPublicOfficial: Boolean!
+  isRussiaTaxResident: Boolean!
+  shouldSkipValidation: Boolean = false
+}
+
+type UpdateIndividualProfileAsInvestorPayload {
+  profile: IndividualProfile!
+}
+
+input UpdateIndividualProfileInput {
+  id: ID!
+  name: String!
+  signedPhone: String
+  signedAvatar: String
+}
+
+input UpdateIndividualProfileInvestorAccreditationInput {
+  profileId: ID!
+  name: String
+  inn: String
+  iian: String
+  ifns: String
+  birthDate: String
+  birthPlace: String
+  employment: String
+  isPublicOfficial: Boolean
+  registrationAddress: AddressInput
+  actualAddress: AddressInput
+  passport: PassportInput
+  shouldValidate: Boolean = false
+}
+
+type UpdateIndividualProfileInvestorAccreditationPayload {
+  profile: IndividualProfile!
+}
+
+type UpdateIndividualProfilePayload {
+  profile: IndividualProfile!
+}
+
+input UpdateLegalEntityProfileBorrowerDataInput {
+  profileId: ID!
+  inn: String
+  kpp: String
+  ogrn: String
+  name: String
+  iian: String
+  address: AddressInput
+  business: BusinessInput
+  passport: PassportInput
+  executive: ExecutiveInput
+  actualAddress: AddressInput
+  bankAccounts: [BankAccountInput!]
+  isDraft: Boolean = true
+}
+
+type UpdateLegalEntityProfileBorrowerDataPayload {
+  profile: LegalEntityProfile!
+}
+
+input UpdateLegalEntityProfileInput {
+  id: ID!
+  inn: String!
+  name: String!
+  signedPhone: String
+  signedAvatar: String
+}
+
+type UpdateLegalEntityProfilePayload {
+  profile: LegalEntityProfile!
+}
+
+input UpdateOrderApplicationInput {
+  orderId: ID!
+  application: String!
+  attachments: [ID!]!
+  isDraft: Boolean = true
+  shortTitle: String
+  longTitle: String
+}
+
+type UpdateOrderApplicationPayload {
+  order: Order!
+}
+
+input UpdateOrderOfferInput {
+  orderId: ID!
+  data: String!
+  attachments: [ID!]!
+  isDraft: Boolean = true
+}
+
+type UpdateOrderOfferPayload {
+  order: Order!
+}
+
+input UpdateProfileInput {
+  profileId: ID!
+  name: String!
+  phone: String!
+}
+
+type UpdateProfilePayload {
+  profile: UserProfile!
+}
+
+input UploadAvatarInput {
+  field: String = "avatar"
+}
+
+type UploadAvatarPayload {
+  url: String!
+  signedAvatar: String!
+}
+
+input UploadFileInput {
+  field: String
+}
+
+input UploadPassportScanInput {
+  field: String = "scan"
+}
+
+type UploadPassportScanPayload {
+  url: String!
+  name: String!
+  signature: String!
+}
+
+type User implements Node {
+  id: ID!
+  email: String!
+  createdAt: String!
+  shouldProvidePassword: Boolean!
+  shouldLoginWithOTPAuth: Boolean
+  profiles: [UserProfile!]!
+  foreignProfiles: [ForeignIndividualProfile!]!
+  questionaries: [ExpressQuestionary!]!
+  password: UserPassword!
+  visibility: UserVisibility!
+  trust: UserTrust!
+  investments(first: Int, after: Cursor): InvestmentConnection!
+  loans(first: Int, after: Cursor): LoanConnection!
+  locale: LocaleEnum!
+  country: String!
+  currency: CurrencyEnum!
+  isSubscribedToMailingList: Boolean
+  orders(first: Int, after: Cursor): OrderConnection!
+  passports(first: Int, after: Cursor): PassportConnection!
+}
+
+type UserConnection {
+  count: Int!
+}
+
+type UserPassword {
+  present: Boolean!
+  updated_at: String
+}
+
+interface UserProfile {
+  id: ID!
+  name: String!
+  wallet: Wallet
+  _avatar: Avatar
+  isApproved: Boolean!
+  bankAccounts: [BankAccount!]!
+  accreditation(role: ProfileRoleEnum!): Accreditation!
+  canBeBorrower: Boolean!
+  approvedAsBorrower: Boolean!
+  canBeInvestor: Boolean!
+  approvedAsInvestor: Boolean!
+  creditRating: CreditRating
+  approvedOnce: Boolean!
+  accountBalance: Float! @deprecated(reason: "Use accountBalanceDetailed")
+  accountBalanceDetailed: [ProfileAccountBalance!]!
+  orders(first: Int, after: Cursor): OrderConnection!
+}
+
+interface UserProfileInterface {
+  id: ID!
+}
+
+union UserProfileUnion =
+    IndividualProfile
+  | EntrepreneurProfile
+  | LegalEntityProfile
+  | ForeignIndividualProfile
+
+type UserTrust {
+  isAvailable: Boolean!
+  orders(first: Int, after: Cursor): OrderConnection!
+}
+
+type UserVisibility {
+  personal: Boolean!
+  profiles: Boolean!
+}
+
+type Version {
+  major: Int!
+  minor: Int!
+  patch: Int!
+}
+
+type Wallet implements Node {
+  id: ID!
+  name: String!
+  karma: Float!
 }

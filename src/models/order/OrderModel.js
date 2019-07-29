@@ -4,15 +4,13 @@ import React from 'react';
 import { QueryRenderer } from 'react-relay';
 import graphql from 'babel-plugin-relay/macro';
 
-import environment from '../app/Environment';
+import environment from '../../app/Environment';
 
-import Users from './Users';
+import Order from './Order';
 
-type Props = {
-  id: Number
-};
+type Props = {};
 
-class UsersModel extends React.Component<Props> {
+class OrderModel extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
@@ -22,22 +20,25 @@ class UsersModel extends React.Component<Props> {
       <QueryRenderer
         environment={environment}
         query={graphql`
-          query UsersModelQuery {
-            users {
-              ...Users_users
+          query OrderModelQuery {
+            orders {
+              edges {
+                node {
+                  ...Order_order
+                }
+              }
             }
           }
         `}
         render={(data) => {
           if (data.error) return <div>Failure!</div>;
           if (!data.props) return <div>Loading...</div>;
-          return <Users
-            users={data.props.users}
-          />;
+          console.log(data.props.orders)
+          return <Order orders={data.props.orders.edges} />;
         }}
       />
     );
   }
 }
 
-export default UsersModel;
+export default OrderModel;

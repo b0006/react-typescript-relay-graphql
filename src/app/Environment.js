@@ -3,7 +3,7 @@
 import { Environment, Network, RecordSource, Store } from 'relay-runtime';
 
 const fetchQuery = (operation: Object, variables: Object): Promise<any> => {
-  return fetch('http://localhost:5000/ql', {
+  return fetch('https://devnet-my.karma.red/graphql', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
