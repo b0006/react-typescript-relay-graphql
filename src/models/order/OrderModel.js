@@ -8,9 +8,7 @@ import environment from '../../app/Environment';
 
 import Order from './Order';
 
-type Props = {
-  id: Number
-};
+type Props = {};
 
 class OrderModel extends React.Component<Props> {
   constructor(props: Props) {
@@ -26,17 +24,17 @@ class OrderModel extends React.Component<Props> {
             orders {
               edges {
                 node {
-                  ...Order_orders
+                  ...Order_order
                 }
               }
             }
           }
         `}
         render={(data) => {
-          console.log(data)
           if (data.error) return <div>Failure!</div>;
           if (!data.props) return <div>Loading...</div>;
-          return <p>orders</p>;
+          console.log(data.props.orders)
+          return <Order orders={data.props.orders.edges} />;
         }}
       />
     );

@@ -30,7 +30,7 @@ class Layout extends React.Component<any> {
           </h1>
         </header>
         <main className="layout__content">
-          <OrderModel id="3" className="layout__list" />
+          <OrderModel className="layout__list" />
         </main>
         <footer className="layout__footer">
           { this.currentYear() }

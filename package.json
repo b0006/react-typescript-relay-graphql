@@ -19,12 +19,14 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "flow": "flow",
-    "relay": "relay-compiler --src ./src/models --schema ./src/app/schema.graphql"
+    "relay": "relay-compiler --src ./src/models --schema ./src/app/schema.graphql",
+    "get-remote-schema": "get-graphql-schema https://devnet-my.karma.red/graphql > src/app/schema.graphql"
   },
   "devDependencies": {
     "babel-plugin-relay": "^5.0.0",
     "babel-preset-env": "^1.7.0",
-    "relay-compiler": "^5.0.0"
+    "relay-compiler": "^5.0.0",
+    "get-graphql-schema": "^2.1.2"
   },
   "browserslist": {
     "production": [
