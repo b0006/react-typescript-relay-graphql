@@ -8,13 +8,7 @@ import environment from '../../app/Environment';
 
 import Order from './Order';
 
-type Props = {};
-
-class OrderModel extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
-
+class OrderModel extends React.Component {
   render(): ?React$Element<any> {
     return (
       <QueryRenderer
@@ -24,7 +18,7 @@ class OrderModel extends React.Component<Props> {
             orders {
               edges {
                 node {
-                  ...Order_order
+                  ...Order_orders
                 }
               }
             }
@@ -33,8 +27,8 @@ class OrderModel extends React.Component<Props> {
         render={(data) => {
           if (data.error) return <div>Failure!</div>;
           if (!data.props) return <div>Loading...</div>;
-          console.log(data.props.orders)
-          return <Order orders={data.props.orders.edges} />;
+          const newData = data.props.orders.edges.map(item => item.node)
+          return <Order orders={newData} />;
         }}
       />
     );
