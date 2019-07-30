@@ -4,25 +4,13 @@ import React from 'react';
 import { createRefetchContainer } from 'react-relay';
 import graphql from 'babel-plugin-relay/macro';
 
-import type { Order_order } from './__generated__/Order_order.graphql';
+import type { Order_orders } from './__generated__/Order_orders.graphql';
 
 type Props = {
-  orders: Order_order,
+  orders: Order_orders,
 };
 
 class Order extends React.Component<Props> {
-  refetch: () => void;
-
-  constructor(props: Props) {
-    super(props);
-
-    this.refetch = this.refetch.bind(this);
-  }
-
-  refetch(): void {
-    this.props.relay.refetch();
-  }
-
   render(): ?React$Element<any> {
     console.log(this.props);
     return (
@@ -36,11 +24,11 @@ class Order extends React.Component<Props> {
 export default createRefetchContainer(
   Order,
   {
-    order: graphql`
-    fragment Order_order on Order @relay(plural: true) {
+    orders: graphql`
+    fragment Order_orders on Order @relay(plural: true) {
       id
       status
-      externalUrl
+      externalUrl 
     }
   `,
   },
